@@ -1,0 +1,38 @@
+name: Build and Deploy Website
+
+on:
+  push:
+    branches: master
+  pull_request:
+    branches: master
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  build_website:
+    name: Build deployment artifact
+    uses: ./.github/workflows/build_website.yaml
+
+  deploy_website:
+    name: Deploy from artifact
+    needs: build_website
+    if: ${{ github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download output artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: website_build_output
+          path: output
+      - name: Show output directory contents
+        run: |
+          ls -la output/
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          publish_branch: gh-pages
