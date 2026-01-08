@@ -52,3 +52,10 @@ li {
   padding: 0.8em;
   margin: 0.5em;
 }
+
+
+@media screen and (max-width: 800px) {
+  ul {
+    display: block
+  }
+}
