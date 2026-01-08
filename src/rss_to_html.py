@@ -178,6 +178,10 @@ def generate_index_html(max_news_items):
         html += f"            <li><a href=\"{item['link']}\" target=\"_blank\"><strong>{item['title']}</strong></a></li>\n"
     html += """        </ul>
     </body>
+    <footer>
+        <p>Author: David Backer</p>
+        <p><a href="https://github.com/davidcbacker/news">Source code</a></p>
+    </footer>
 </html>\n"""
     return html
 
