@@ -23,6 +23,9 @@ jobs:
       - name: Build website
         run: |
           python src/rss_to_html.py
+      - name: Show output directory contents
+        run: |
+          ls -la output/
       - name: Upload output artifact
         uses: actions/upload-artifact@v6
         with:

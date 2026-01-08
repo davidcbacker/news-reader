@@ -27,9 +27,6 @@ jobs:
         with:
           name: website_build_output
           path: output
-      - name: Show output directory contents
-        run: |
-          ls -la output/
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
