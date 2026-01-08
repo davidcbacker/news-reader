@@ -153,7 +153,7 @@ def generate_news_html():
         <link rel=\"stylesheet\" href=\"style.css\">
     </head>
     <body>
-        <a href="https://davidcbacker.github.io/news-reader">Top News</a>
+        <a href="index.html">Top News</a>
         <h2><a href="https://www.bloomberg.com/">Bloomberg</a></h2>
         <p class="last-updated">{bloomberg_last_updated if bloomberg_last_updated else ''}</p>
         <ul>\n"""
