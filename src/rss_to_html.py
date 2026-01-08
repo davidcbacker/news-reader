@@ -28,6 +28,43 @@ def parse_rss_feed(url: str):
         })
     return items, feed.feed.get("updated", None)
 
+def extract_secondary_sources_from_description(description: str):
+    description_stripped = description.replace('<li><a href="', '')
+    description_stripped = description_stripped.replace('<ol>', '').replace('</ol>', '')
+    description_stripped = description_stripped.replace('<strong>', '').replace('</strong>', '')
+    sources_split_pattern = "</font></li>"
+    description_stripped_split = description_stripped.split(sources_split_pattern)
+
+    if len(description_stripped_split) > 1:
+        # drop the first item which is the primary source
+        description_stripped_split = description_stripped_split[1:]
+        # drop the last element which is empty after the rsplit
+        description_stripped_split = description_stripped_split[:-1]
+    else:
+        return []
+
+    item_secondary_sources_anchors = []
+    for source in description_stripped_split:
+        # URL then '" target="_blank">' then '</a>&nbsp;&nbsp;<font color="#6f6f6f">' then source
+        url_split_pattern = '" target="_blank">'
+        url_split = source.split(url_split_pattern)
+        if len(url_split) != 2:
+            print(f"Unexpected source format during url split: {source}")
+            continue
+        url = url_split[0]
+        title_publisher_split_pattern = '</a>&nbsp;&nbsp;<font color="#6f6f6f">'
+        title_publisher_split = url_split[1].split(title_publisher_split_pattern)
+        if len(title_publisher_split) != 2:
+            print(f"Unexpected source format during title-publisher split: {source}")
+            continue
+        title = title_publisher_split[0]
+        publisher = title_publisher_split[1]
+        item_secondary_sources_anchors.append(
+            f'<a href="{url}" title="{title}" target="_blank">[{publisher}]</a>'
+        )
+
+    return item_secondary_sources_anchors
+
 def generate_news_html():
     MAX_NEWS_ITEMS = 18
     MAX_NEWS_ITEMS_BIG = 30
@@ -88,30 +125,7 @@ def generate_news_html():
     # build the Google News section with secondary sources
     for item in google_news_items[:MAX_NEWS_ITEMS_BIG]:
         item_description = item.get("description", "")
-        item_description_stripped = item_description.replace('<ol>', '').replace('</ol>', '').replace('<li><a href="', '')
-        item_description_stripped_split = item_description_stripped.split("</font></li>")
-        if len(item_description_stripped_split) > 1:
-            # drop the last element which is empty after the rsplit
-            item_description_stripped_split = item_description_stripped_split[:-1]
-            # drop the first item which is the primary source
-            item_description_stripped_split = item_description_stripped_split[1:]
-        
-        item_secondary_sources_anchors = []
-
-        for source in item_description_stripped_split:
-            # URL then '" target="_blank">' then '</a>&nbsp;&nbsp;<font color="#6f6f6f">' then source
-            source_url_split = source.split('" target="_blank">')
-            if len(source_url_split) != 2:
-                print(f"Unexpected source format: {source}")
-                continue
-            source_url = source_url_split[0]
-            source_title_and_publisher_split = source_url_split[1].split('</a>&nbsp;&nbsp;<font color="#6f6f6f">')
-            if len(source_title_and_publisher_split) != 2:
-                print(f"Unexpected source title and publisher format: {source}")
-                continue
-            source_title = source_title_and_publisher_split[0]
-            source_publisher = source_title_and_publisher_split[1]
-            item_secondary_sources_anchors.append(f'<a href="{source_url}" title="{source_title}" target="_blank">[{source_publisher}]</a>')
+        item_secondary_sources_anchors = extract_secondary_sources_from_description(item_description)
 
         if item_secondary_sources_anchors:
             html += f"            <li><a href=\"{item['link']}\" title=\"{item['title']}\" target=\"_blank\"><strong>{item['title']}</strong></a><br>{' '.join(item_secondary_sources_anchors)}</li>\n"
