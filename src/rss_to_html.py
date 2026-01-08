@@ -1,7 +1,7 @@
-import feedparser
 import os
 import shutil
 import ssl
+import feedparser
 ssl._create_default_https_context = ssl._create_unverified_context
 # import certifi
 # ssl._create_default_https_context = lambda: ssl.create_default_context(cafile=certifi.where())
@@ -16,7 +16,8 @@ def parse_rss_feed(url: str):
     for entry in feed.entries:
         entry_title = entry.get("title", "No title")
         entry_title = entry_title.replace("<strong>", "").replace("</strong>", "")
-        entry_title_rsplit = entry_title.rsplit(" - ", 1) # Google News formats titles like "Headline - Source"
+        # Google News formats titles like "Headline - Source"
+        entry_title_rsplit = entry_title.rsplit(" - ", 1)
         if len(entry_title_rsplit) == 2:
             entry_title_cleaned = f"{entry_title_rsplit[0]} [{entry_title_rsplit[1]}]"
         else:
@@ -66,43 +67,43 @@ def extract_secondary_sources_from_description(description: str):
     return item_secondary_sources_anchors
 
 def generate_news_html():
-    MAX_NEWS_ITEMS = 18
-    MAX_NEWS_ITEMS_BIG = 30
-    GOOGLE_NEWS_RSS_URL = "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en"
-    BLOOMBERG_RSS_URL = "https://feeds.bloomberg.com/news.rss"
-    CNBC_RSS_URL = "https://www.cnbc.com/id/100003114/device/rss/rss.html"
-    FOX_BUSINESS_RSS_URL = "https://moxie.foxbusiness.com/google-publisher/latest.xml"
-    MIT_TECH_REVIEW_RSS_URL = "https://www.technologyreview.com/feed"
-    REUTERS_RSS_URL = "https://news.google.com/rss/search?q=site%3Areuters.com&hl=en-US&gl=US&ceid=US%3Aen"
+    max_news_items = 18
+    max_news_items_big = 30
+    google_news_rss_url = "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en"
+    bloomberg_rss_url = "https://feeds.bloomberg.com/news.rss"
+    cnbc_rss_url = "https://www.cnbc.com/id/100003114/device/rss/rss.html"
+    fox_business_rss_url = "https://moxie.foxbusiness.com/google-publisher/latest.xml"
+    mit_tech_review_rss_url = "https://www.technologyreview.com/feed"
+    reuters_rss_url = "https://news.google.com/rss/search?q=site%3Areuters.com&hl=en-US&gl=US&ceid=US%3Aen"
 
     google_news_items = []
     google_news_last_updated = None
-    google_news_items, google_news_last_updated = parse_rss_feed(GOOGLE_NEWS_RSS_URL)
+    google_news_items, google_news_last_updated = parse_rss_feed(google_news_rss_url)
     print(f"Fetched {len(google_news_items)} items from Google News.")
 
     bloomberg_items = []
     bloomberg_last_updated = None
-    bloomberg_items, bloomberg_last_updated = parse_rss_feed(BLOOMBERG_RSS_URL)
+    bloomberg_items, bloomberg_last_updated = parse_rss_feed(bloomberg_rss_url)
     print(f"Fetched {len(bloomberg_items)} items from Bloomberg.")
 
     cnbc_items = []
     cnbc_last_updated = None
-    cnbc_items, cnbc_last_updated = parse_rss_feed(CNBC_RSS_URL)
+    cnbc_items, cnbc_last_updated = parse_rss_feed(cnbc_rss_url)
     print(f"Fetched {len(cnbc_items)} items from CNBC.")
 
     fox_business_items = []
     fox_business_last_updated = None
-    fox_business_items, fox_business_last_updated = parse_rss_feed(FOX_BUSINESS_RSS_URL)
+    fox_business_items, fox_business_last_updated = parse_rss_feed(fox_business_rss_url)
     print(f"Fetched {len(fox_business_items)} items from Fox Business.")
 
     mit_tech_review_items = []
     mit_tech_review_last_updated = None
-    mit_tech_review_items, mit_tech_review_last_updated = parse_rss_feed(MIT_TECH_REVIEW_RSS_URL)
+    mit_tech_review_items, mit_tech_review_last_updated = parse_rss_feed(mit_tech_review_rss_url)
     print(f"Fetched {len(mit_tech_review_items)} items from MIT Technology Review.")
 
     reuters_items = []
     reuters_last_updated = None
-    reuters_items, reuters_last_updated = parse_rss_feed(REUTERS_RSS_URL)
+    reuters_items, reuters_last_updated = parse_rss_feed(reuters_rss_url)
     print(f"Fetched {len(reuters_items)} items from Reuters.")
 
     # Prepare the output directory
@@ -123,7 +124,7 @@ def generate_news_html():
         <ul>\n"""
 
     # build the Google News section with secondary sources
-    for item in google_news_items[:MAX_NEWS_ITEMS_BIG]:
+    for item in google_news_items[:max_news_items_big]:
         item_description = item.get("description", "")
         item_secondary_sources_anchors = extract_secondary_sources_from_description(item_description)
 
@@ -137,7 +138,7 @@ def generate_news_html():
     html += f"""        <h2 id="mit-technology-review"><a href="https://www.technologyreview.com/">MIT Technology Review</a></h2>
         <p class="last-updated">{mit_tech_review_last_updated if mit_tech_review_last_updated else ''}</p>
         <ul>\n"""
-    for item in mit_tech_review_items[:MAX_NEWS_ITEMS]:
+    for item in mit_tech_review_items[:max_news_items]:
         html += f"            <li><a href=\"{item['link']}\" title=\"{item['description']}\" target=\"_blank\"><strong>{item['title']}</strong><br>{item['description']}</a></li>\n"
     html += "        </ul>\n"
 
@@ -145,7 +146,7 @@ def generate_news_html():
     html += f"""        <h2 id="reuters"><a href="https://www.reuters.com/">Reuters</a></h2>
         <p class="last-updated">{reuters_last_updated if reuters_last_updated else ''}</p>
         <ul>\n"""
-    for item in reuters_items[:MAX_NEWS_ITEMS_BIG]:
+    for item in reuters_items[:max_news_items_big]:
         # remove ' - Reuters' from the title
         if item['title'].endswith(" [Reuters]"):
             item['title'] = item['title'][:-11]
@@ -171,7 +172,7 @@ def generate_news_html():
         <h2 id="bloomberg"><a href="https://www.bloomberg.com/">Bloomberg</a></h2>
         <p class="last-updated">{bloomberg_last_updated if bloomberg_last_updated else ''}</p>
         <ul>\n"""
-    for item in bloomberg_items[:MAX_NEWS_ITEMS]:
+    for item in bloomberg_items[:max_news_items]:
         html_business += f"            <li><a href=\"{item['link']}\" title=\"{item['description']}\" target=\"_blank\"><strong>{item['title']}</strong><br>{item['description']}</a></li>\n"
     html_business += "        </ul>\n"
 
@@ -179,7 +180,7 @@ def generate_news_html():
     html_business += f"""        <h2 id="cnbc"><a href="https://www.cnbc.com/">CNBC</a></h2>
         <p class="last-updated">{cnbc_last_updated if cnbc_last_updated else ''}</p>
         <ul>\n"""
-    for item in cnbc_items[:MAX_NEWS_ITEMS]:
+    for item in cnbc_items[:max_news_items]:
         html_business += f"            <li><a href=\"{item['link']}\" title=\"{item['description']}\" target=\"_blank\"><strong>{item['title']}</strong><br>{item['description']}</a></li>\n"
     html_business += "        </ul>\n"
 
@@ -187,7 +188,7 @@ def generate_news_html():
     html_business += f"""        <h2 id="fox-business"><a href="https://www.foxbusiness.com/">Fox Business</a></h2>
         <p class="last-updated">{fox_business_last_updated if fox_business_last_updated else ''}</p>
         <ul>\n"""
-    for item in fox_business_items[:MAX_NEWS_ITEMS]:
+    for item in fox_business_items[:max_news_items]:
         html_business += f"            <li><a href=\"{item['link']}\" title=\"{item['description']}\" target=\"_blank\"><strong>{item['title']}</strong><br>{item['description']}</a></li>\n"
     html_business += """        </ul>
     </body>
