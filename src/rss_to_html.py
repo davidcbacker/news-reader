@@ -66,7 +66,143 @@ def extract_secondary_sources_from_description(description: str):
 
     return item_secondary_sources_anchors
 
-def generate_news_html():
+def generate_html_base(title: str):
+    html_base = f"""<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <title>{title}</title>
+    <link rel=\"stylesheet\" href=\"style.css\">
+</head>
+<body>\n"""
+    return html_base
+
+def generate_business_html(
+    bloomberg_items,
+    bloomberg_last_updated,
+    cnbc_items,
+    cnbc_last_updated,
+    fox_business_items,
+    fox_business_last_updated,
+    max_news_items,
+):
+    html = generate_html_base("Business News")
+    
+    # top nav bar
+    html += """        <ul>
+            <li><a href="index.html">Top News</a></li>
+            <li>Business News</li>
+            <li><a href="technology.html">Technology News</a></li>
+        </ul>\n"""
+    
+    # build the Bloomberg News section
+    html += f"""        <h2 id="bloomberg"><a href="https://www.bloomberg.com/">Bloomberg</a></h2>
+        <p class="last-updated">{bloomberg_last_updated if bloomberg_last_updated else ''}</p>
+        <ul>\n"""
+    for item in bloomberg_items[:max_news_items]:
+        html += f"            <li><a href=\"{item['link']}\" title=\"{item['description']}\" target=\"_blank\"><strong>{item['title']}</strong><br>{item['description']}</a></li>\n"
+    html += "        </ul>\n"
+
+    # build the CNBC News section
+    html += f"""        <h2 id="cnbc"><a href="https://www.cnbc.com/">CNBC</a></h2>
+        <p class="last-updated">{cnbc_last_updated if cnbc_last_updated else ''}</p>
+        <ul>\n"""
+    for item in cnbc_items[:max_news_items]:
+        html += f"            <li><a href=\"{item['link']}\" title=\"{item['description']}\" target=\"_blank\"><strong>{item['title']}</strong><br>{item['description']}</a></li>\n"
+    html += "        </ul>\n"
+
+    # build the Fox Business News section
+    html += f"""        <h2 id="fox-business"><a href="https://www.foxbusiness.com/">Fox Business</a></h2>
+        <p class="last-updated">{fox_business_last_updated if fox_business_last_updated else ''}</p>
+        <ul>\n"""
+    for item in fox_business_items[:max_news_items]:
+        html += f"            <li><a href=\"{item['link']}\" title=\"{item['description']}\" target=\"_blank\"><strong>{item['title']}</strong><br>{item['description']}</a></li>\n"
+    html += """        </ul>
+    </body>
+</html>\n"""
+    return html
+
+def generate_index_html(
+    google_news_items,
+    google_news_last_updated,
+    reuters_items,
+    reuters_last_updated,
+    max_news_items,
+    max_news_items_big,
+):
+    html = generate_html_base("Top News")
+    
+    # top nav bar
+    html += """        <ul>
+            <li>Top News</li>
+            <li><a href="business.html">Business News</a></li>
+            <li><a href="technology.html">Technology News</a></li>
+        </ul>\n"""
+    
+    # build the Google News section with secondary sources
+    html += f"""        <h2 id="google-news"><a href="https://news.google.com/home?hl=en-US&gl=US&ceid=US:en">Google News</a></h2>
+        <p class="last-updated">{google_news_last_updated if google_news_last_updated else ''}</p>
+        <ul>\n"""
+    for item in google_news_items[:max_news_items_big]:
+        item_description = item.get("description", "")
+        item_secondary_sources_anchors = extract_secondary_sources_from_description(item_description)
+
+        if item_secondary_sources_anchors:
+            html += f"            <li><a href=\"{item['link']}\" title=\"{item['title']}\" target=\"_blank\"><strong>{item['title']}</strong></a><br>{' '.join(item_secondary_sources_anchors)}</li>\n"
+        else:
+            html += f"            <li><a href=\"{item['link']}\" title=\"{item['title']}\" target=\"_blank\">{item['title']}</a></li>\n"
+    html += "        </ul>\n"
+
+    # build the Reuters News section
+    html += f"""        <h2 id="reuters"><a href="https://www.reuters.com/">Reuters</a></h2>
+        <p class="last-updated">{reuters_last_updated if reuters_last_updated else ''}</p>
+        <ul>\n"""
+    for item in reuters_items[:max_news_items_big]:
+        # remove ' - Reuters' from the title
+        if item['title'].endswith(" [Reuters]"):
+            item['title'] = item['title'][:-11]
+        html += f"            <li><a href=\"{item['link']}\" target=\"_blank\"><strong>{item['title']}</strong></a></li>\n"
+    html += """        </ul>
+    </body>
+</html>\n"""
+    return html
+
+def generate_technology_html(
+    mit_tech_review_items,
+    mit_tech_review_last_updated,
+    reddit_technology_items,
+    reddit_technology_last_updated,
+    max_news_items,
+):
+    html = generate_html_base("Technology News")
+    
+    # top nav bar
+    html += """        <ul>
+            <li><a href="index.html">Top News</a></li>
+            <li><a href="business.html">Business News</a></li>
+            <li>Technology News</li>
+        </ul>\n"""
+
+    # build the MIT Technology Review News section
+    html += f"""        <h2 id="mit-technology-review"><a href="https://www.technologyreview.com/">MIT Technology Review</a></h2>
+        <p class="last-updated">{mit_tech_review_last_updated if mit_tech_review_last_updated else ''}</p>
+        <ul>\n"""
+    for item in mit_tech_review_items[:max_news_items]:
+        html += f"            <li><a href=\"{item['link']}\" title=\"{item['description']}\" target=\"_blank\"><strong>{item['title']}</strong><br>{item['description']}</a></li>\n"
+    html += "        </ul>\n"
+    
+    # build the Reddit Technology News section
+    html += f"""        <h2 id="reddit-technology"><a href="https://www.reddit.com/r/technology/">Reddit Technology</a></h2>
+        <p class="last-updated">{reddit_technology_last_updated if reddit_technology_last_updated else ''}</p>
+        <ul>\n"""
+    for item in reddit_technology_items[:max_news_items]:
+        html += f"            <li><a href=\"{item['link']}\" target=\"_blank\"><strong>{item['title']}</strong></a></li>\n"
+    html += """        </ul>
+    </body>
+</html>\n"""
+    return html
+
+def generate_news_pages():
     max_news_items = 18
     max_news_items_big = 30
     google_news_rss_url = "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en"
@@ -75,11 +211,33 @@ def generate_news_html():
     fox_business_rss_url = "https://moxie.foxbusiness.com/google-publisher/latest.xml"
     mit_tech_review_rss_url = "https://www.technologyreview.com/feed"
     reuters_rss_url = "https://news.google.com/rss/search?q=site%3Areuters.com&hl=en-US&gl=US&ceid=US%3Aen"
+    reddit_technology_rss_url = "https://www.reddit.com/r/technology/top/.rss?t=month"
+
+    # Prepare the output directory
+    os.makedirs("output", exist_ok=True)
+    shutil.copy("assets/style.css", "output/style.css")
 
     google_news_items = []
     google_news_last_updated = None
     google_news_items, google_news_last_updated = parse_rss_feed(google_news_rss_url)
     print(f"Fetched {len(google_news_items)} items from Google News.")
+
+    reuters_items = []
+    reuters_last_updated = None
+    reuters_items, reuters_last_updated = parse_rss_feed(reuters_rss_url)
+    print(f"Fetched {len(reuters_items)} items from Reuters.")
+
+    html_index = generate_index_html(
+        google_news_items=google_news_items,
+        google_news_last_updated=google_news_last_updated,
+        reuters_items=reuters_items,
+        reuters_last_updated=reuters_last_updated,
+        max_news_items=max_news_items,
+        max_news_items_big=max_news_items_big,
+    )
+    with open("output/index.html", "w", encoding="utf-8") as f:
+        f.write(html_index)
+    print("index.html generated.")
 
     bloomberg_items = []
     bloomberg_last_updated = None
@@ -96,107 +254,39 @@ def generate_news_html():
     fox_business_items, fox_business_last_updated = parse_rss_feed(fox_business_rss_url)
     print(f"Fetched {len(fox_business_items)} items from Fox Business.")
 
+    html_business = generate_business_html(
+        bloomberg_items=bloomberg_items,
+        bloomberg_last_updated=bloomberg_last_updated,
+        cnbc_items=cnbc_items,
+        cnbc_last_updated=cnbc_last_updated,
+        fox_business_items=fox_business_items,
+        fox_business_last_updated=fox_business_last_updated,
+        max_news_items=max_news_items,
+    )
+    with open("output/business.html", "w", encoding="utf-8") as f:
+        f.write(html_business)
+    print("business.html generated.")
+
     mit_tech_review_items = []
     mit_tech_review_last_updated = None
     mit_tech_review_items, mit_tech_review_last_updated = parse_rss_feed(mit_tech_review_rss_url)
     print(f"Fetched {len(mit_tech_review_items)} items from MIT Technology Review.")
 
-    reuters_items = []
-    reuters_last_updated = None
-    reuters_items, reuters_last_updated = parse_rss_feed(reuters_rss_url)
-    print(f"Fetched {len(reuters_items)} items from Reuters.")
+    reddit_technology_items = []
+    reddit_technology_last_updated = None
+    reddit_technology_items, reddit_technology_last_updated = parse_rss_feed(reddit_technology_rss_url)
+    print(f"Fetched {len(reddit_technology_items)} items from Reddit Technology.")
 
-    # Prepare the output directory
-    os.makedirs("output", exist_ok=True)
-    shutil.copy("assets/style.css", "output/style.css")
-
-    html = f"""<!DOCTYPE html>
-<html lang=\"en\">
-    <head>
-        <meta charset=\"UTF-8\">
-        <title>Top News</title>
-        <link rel=\"stylesheet\" href=\"style.css\">
-    </head>
-    <body>
-        <a href="business.html">Business News</a>
-        <h2 id="google-news"><a href="https://news.google.com/home?hl=en-US&gl=US&ceid=US:en">Google News</a></h2>
-        <p class="last-updated">{google_news_last_updated if google_news_last_updated else ''}</p>
-        <ul>\n"""
-
-    # build the Google News section with secondary sources
-    for item in google_news_items[:max_news_items_big]:
-        item_description = item.get("description", "")
-        item_secondary_sources_anchors = extract_secondary_sources_from_description(item_description)
-
-        if item_secondary_sources_anchors:
-            html += f"            <li><a href=\"{item['link']}\" title=\"{item['title']}\" target=\"_blank\"><strong>{item['title']}</strong></a><br>{' '.join(item_secondary_sources_anchors)}</li>\n"
-        else:
-            html += f"            <li><a href=\"{item['link']}\" title=\"{item['title']}\" target=\"_blank\">{item['title']}</a></li>\n"
-    html += "        </ul>\n"
-
-    # build the MIT Technology Review News section
-    html += f"""        <h2 id="mit-technology-review"><a href="https://www.technologyreview.com/">MIT Technology Review</a></h2>
-        <p class="last-updated">{mit_tech_review_last_updated if mit_tech_review_last_updated else ''}</p>
-        <ul>\n"""
-    for item in mit_tech_review_items[:max_news_items]:
-        html += f"            <li><a href=\"{item['link']}\" title=\"{item['description']}\" target=\"_blank\"><strong>{item['title']}</strong><br>{item['description']}</a></li>\n"
-    html += "        </ul>\n"
-
-    # build the Reuters News section
-    html += f"""        <h2 id="reuters"><a href="https://www.reuters.com/">Reuters</a></h2>
-        <p class="last-updated">{reuters_last_updated if reuters_last_updated else ''}</p>
-        <ul>\n"""
-    for item in reuters_items[:max_news_items_big]:
-        # remove ' - Reuters' from the title
-        if item['title'].endswith(" [Reuters]"):
-            item['title'] = item['title'][:-11]
-        html += f"            <li><a href=\"{item['link']}\" target=\"_blank\"><strong>{item['title']}</strong></a></li>\n"
-    html += """        </ul>
-    </body>
-</html>\n"""
-
-    with open("output/index.html", "w", encoding="utf-8") as f:
-        f.write(html)
-
-    print("index.html generated.")
-
-    html_business = f"""<!DOCTYPE html>
-<html lang=\"en\">
-    <head>
-        <meta charset=\"UTF-8\">
-        <title>Business News</title>
-        <link rel=\"stylesheet\" href=\"style.css\">
-    </head>
-    <body>
-        <a href="index.html">Top News</a>
-        <h2 id="bloomberg"><a href="https://www.bloomberg.com/">Bloomberg</a></h2>
-        <p class="last-updated">{bloomberg_last_updated if bloomberg_last_updated else ''}</p>
-        <ul>\n"""
-    for item in bloomberg_items[:max_news_items]:
-        html_business += f"            <li><a href=\"{item['link']}\" title=\"{item['description']}\" target=\"_blank\"><strong>{item['title']}</strong><br>{item['description']}</a></li>\n"
-    html_business += "        </ul>\n"
-
-    # build the CNBC News section
-    html_business += f"""        <h2 id="cnbc"><a href="https://www.cnbc.com/">CNBC</a></h2>
-        <p class="last-updated">{cnbc_last_updated if cnbc_last_updated else ''}</p>
-        <ul>\n"""
-    for item in cnbc_items[:max_news_items]:
-        html_business += f"            <li><a href=\"{item['link']}\" title=\"{item['description']}\" target=\"_blank\"><strong>{item['title']}</strong><br>{item['description']}</a></li>\n"
-    html_business += "        </ul>\n"
-
-    # build the Fox Business News section
-    html_business += f"""        <h2 id="fox-business"><a href="https://www.foxbusiness.com/">Fox Business</a></h2>
-        <p class="last-updated">{fox_business_last_updated if fox_business_last_updated else ''}</p>
-        <ul>\n"""
-    for item in fox_business_items[:max_news_items]:
-        html_business += f"            <li><a href=\"{item['link']}\" title=\"{item['description']}\" target=\"_blank\"><strong>{item['title']}</strong><br>{item['description']}</a></li>\n"
-    html_business += """        </ul>
-    </body>
-</html>\n"""
-
-    with open("output/business.html", "w", encoding="utf-8") as f:
-        f.write(html_business)
-    print("business.html generated.")
+    html_technology = generate_technology_html(
+        mit_tech_review_items=mit_tech_review_items,
+        mit_tech_review_last_updated=mit_tech_review_last_updated,
+        reddit_technology_items=reddit_technology_items,
+        reddit_technology_last_updated=reddit_technology_last_updated,
+        max_news_items=max_news_items,
+    )
+    with open("output/technology.html", "w", encoding="utf-8") as f:
+        f.write(html_technology)
+    print("technology.html generated.")
 
 if __name__ == "__main__":
-    generate_news_html()
+    generate_news_pages()
