@@ -43,8 +43,8 @@ ul.navbar {
 }
 
 ul.navbar li {
-  background: #f8f8f8;
-  border-radius: 10px;
+  background: #000000;
+  border-radius: 0;
   box-sizing: border-box;
   flex: 1 1 1px;
   margin: 0.5em;
@@ -58,14 +58,15 @@ ul.navbar li.active {
 }
 
 ul.navbar li a {
-  color: #000000;
+  color: #ffffff;
+  font-weight: bold;
   overflow-wrap: break-word;
   text-decoration: none;
-
 }
 
 ul.navbar li.active a {
-  color: #ffffff;
+  color: #000000;
+  font-weight: normal;
 }
 
 ul.navbar li a:hover {
