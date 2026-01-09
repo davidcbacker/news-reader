@@ -11,7 +11,7 @@ body {
 
 h2 {
   font-size: 2.5em;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 h2 a {
@@ -54,10 +54,18 @@ ul.navbar li {
   margin: 0.5em;
 }
 
+ul.navbar li.active {
+  background: #ffffff;
+}
+
 ul.navbar li a {
   color: #000000;
   text-decoration: none;
   overflow-wrap: break-word;
+}
+
+ul.navbar li.active a {
+  color: #ffffff;
 }
 
 ul.navbar li a:hover {
