@@ -2,6 +2,7 @@
 This module fetches news from various RSS feeds and generates HTML pages for different news categories.
 It includes functions for parsing RSS feeds, extracting secondary sources, and building HTML content for news pages.
 """
+import http
 import os
 import shutil
 import ssl
@@ -21,11 +22,18 @@ def parse_rss_feed(url: str):
     context.check_hostname = False
     context.verify_mode = ssl.CERT_NONE
     handlers = [urllib.request.HTTPSHandler(context=context)]
-    feed = feedparser.parse(url, handlers=handlers)
+    try:
+        print(f"Fetching items from {os.path.dirname(url)}")
+        feed = feedparser.parse(url, handlers=handlers)
+    except http.client.RemoteDisconnected as e:
+        print(f"Error: RemoteDisconnected with {url}")
+        print(e)
+        return [], "N/a"
+
     feed_title = feed.feed.get('title', 'Unknown feed')
     if feed.bozo:
         print(f"Feed.bozo_exception: {feed.bozo_exception}  for URL: {url}")
-    print(f"Fetching {len(feed.entries)} items from {feed_title}")
+    print(f"Loading {len(feed.entries)} items from {feed_title}")
     items = []
     for entry in feed.entries:
         entry_title = entry.get("title", "No title")
@@ -258,13 +266,13 @@ def generate_index_html(max_news_items):
     google_news_items = []
     google_news_last_updated = None
     google_news_items, google_news_last_updated = parse_rss_feed(google_news_rss_url)
-    print(f"Fetched {len(google_news_items)} items from Google News.")
+    print(f"Loaded {len(google_news_items)} items from Google News.")
 
     reuters_rss_url = "https://news.google.com/rss/search?q=site%3Areuters.com&hl=en-US&gl=US&ceid=US%3Aen"
     reuters_items = []
     reuters_last_updated = None
     reuters_items, reuters_last_updated = parse_rss_feed(reuters_rss_url)
-    print(f"Fetched {len(reuters_items)} items from Reuters.")
+    print(f"Loaded {len(reuters_items)} items from Reuters.")
 
     index_html = generate_html_base("Top News")
     index_html += generate_top_nav_bar("index.html")
@@ -301,25 +309,25 @@ def generate_us_news_html(max_news_items):
     google_news_us_items = []
     google_news_us_last_updated = None
     google_news_us_items, google_news_us_last_updated = parse_rss_feed(google_news_us_rss_url)
-    print(f"Fetched {len(google_news_us_items)} items from Google News US.")
+    print(f"Loaded {len(google_news_us_items)} items from Google News US.")
 
     fox_weather_rss_url = "https://moxie.foxweather.com/google-publisher/latest.xml"
     fox_weather_items = []
     fox_weather_last_updated = None
     fox_weather_items, fox_weather_last_updated = parse_rss_feed(fox_weather_rss_url)
-    print(f"Fetched {len(fox_weather_items)} items from Fox Weather.")
+    print(f"Loaded {len(fox_weather_items)} items from Fox Weather.")
 
     cnbc_us_rss_url = "https://www.cnbc.com/id/15837362/device/rss/rss.html"
     cnbc_us_items = []
     cnbc_us_last_updated = None
     cnbc_us_items, cnbc_us_last_updated = parse_rss_feed(cnbc_us_rss_url)
-    print(f"Fetched {len(cnbc_us_items)} items from CNBC U.S.")
+    print(f"Loaded {len(cnbc_us_items)} items from CNBC U.S.")
 
     cnn_us_rss_url = "http://rss.cnn.com/rss/cnn_us.rss"
     cnn_us_items = []
     cnn_us_last_updated = None
     cnn_us_items, cnn_us_last_updated = parse_rss_feed(cnn_us_rss_url)
-    print(f"Fetched {len(cnn_us_items)} items from CNN U.S.")
+    print(f"Loaded {len(cnn_us_items)} items from CNN U.S.")
 
     us_news_html = generate_html_base("U.S. News")
     us_news_html += generate_top_nav_bar("us.html")
@@ -371,7 +379,7 @@ def generate_world_news_html(max_news_items):
     google_news_world_items = []
     google_news_world_last_updated = None
     google_news_world_items, google_news_world_last_updated = parse_rss_feed(google_news_world_rss_url)
-    print(f"Fetched {len(google_news_world_items)} items from Google News World.")
+    print(f"Loaded {len(google_news_world_items)} items from Google News World.")
 
     world_news_html = generate_html_base("World News")
     world_news_html += generate_top_nav_bar("world.html")
@@ -380,7 +388,7 @@ def generate_world_news_html(max_news_items):
     bbc_world_items = []
     bbc_world_last_updated = None
     bbc_world_items, bbc_world_last_updated = parse_rss_feed(bbc_world_rss_url)
-    print(f"Fetched {len(bbc_world_items)} items from BBC World.")
+    print(f"Loaded {len(bbc_world_items)} items from BBC World.")
 
     world_news_html += generate_google_news_html_section(
         section_title="Google News - World",
@@ -414,25 +422,25 @@ def generate_business_html(max_news_items):
     google_news_business_items = []
     google_news_business_last_updated = None
     google_news_business_items, google_news_business_last_updated = parse_rss_feed(google_news_business_rss_url)
-    print(f"Fetched {len(google_news_business_items)} items from Google News Business.")
+    print(f"Loaded {len(google_news_business_items)} items from Google News Business.")
 
     bloomberg_rss_url = "https://feeds.bloomberg.com/news.rss"
     bloomberg_items = []
     bloomberg_last_updated = None
     bloomberg_items, bloomberg_last_updated = parse_rss_feed(bloomberg_rss_url)
-    print(f"Fetched {len(bloomberg_items)} items from Bloomberg.")
+    print(f"Loaded {len(bloomberg_items)} items from Bloomberg.")
 
     cnbc_rss_url = "https://www.cnbc.com/id/100003114/device/rss/rss.html"
     cnbc_items = []
     cnbc_last_updated = None
     cnbc_items, cnbc_last_updated = parse_rss_feed(cnbc_rss_url)
-    print(f"Fetched {len(cnbc_items)} items from CNBC.")
+    print(f"Loaded {len(cnbc_items)} items from CNBC.")
 
     fox_business_rss_url = "https://moxie.foxbusiness.com/google-publisher/latest.xml"
     fox_business_items = []
     fox_business_last_updated = None
     fox_business_items, fox_business_last_updated = parse_rss_feed(fox_business_rss_url)
-    print(f"Fetched {len(fox_business_items)} items from Fox Business.")
+    print(f"Loaded {len(fox_business_items)} items from Fox Business.")
 
     business_html = generate_html_base("Business")
     business_html += generate_top_nav_bar("business.html")
@@ -486,19 +494,19 @@ def generate_security_html(max_news_items):
     hacker_news_items = []
     hacker_news_last_updated = None
     hacker_news_items, hacker_news_last_updated = parse_rss_feed(hacker_news_rss_url)
-    print(f"Fetched {len(hacker_news_items)} items from Hacker News.")
+    print(f"Loaded {len(hacker_news_items)} items from Hacker News.")
 
     sans_internet_storm_center_rss_url = "https://isc.sans.edu/rssfeed.xml"
     sans_isc_items = []
     sans_isc_last_updated = None
     sans_isc_items, sans_isc_last_updated = parse_rss_feed(sans_internet_storm_center_rss_url)
-    print(f"Fetched {len(sans_isc_items)} items from SANS Internet Storm Center.")
+    print(f"Loaded {len(sans_isc_items)} items from SANS Internet Storm Center.")
 
     krebs_on_security_rss_url = "https://krebsonsecurity.com/feed/"
     krebs_items = []
     krebs_last_updated = None
     krebs_items, krebs_last_updated = parse_rss_feed(krebs_on_security_rss_url)
-    print(f"Fetched {len(krebs_items)} items from Krebs on Security.")
+    print(f"Loaded {len(krebs_items)} items from Krebs on Security.")
 
     security_html = generate_html_base("Security")
     security_html += generate_top_nav_bar("security.html")
@@ -543,19 +551,19 @@ def generate_technology_html(max_news_items):
     google_news_technology_items = []
     google_news_technology_last_updated = None
     google_news_technology_items, google_news_technology_last_updated = parse_rss_feed(google_news_technology_rss_url)
-    print(f"Fetched {len(google_news_technology_items)} items from Google News Technology.")
+    print(f"Loaded {len(google_news_technology_items)} items from Google News Technology.")
 
     mit_tech_review_rss_url = "https://www.technologyreview.com/feed"
     mit_tech_review_items = []
     mit_tech_review_last_updated = None
     mit_tech_review_items, mit_tech_review_last_updated = parse_rss_feed(mit_tech_review_rss_url)
-    print(f"Fetched {len(mit_tech_review_items)} items from MIT Technology Review.")
+    print(f"Loaded {len(mit_tech_review_items)} items from MIT Technology Review.")
 
     reddit_technology_rss_url = "https://www.reddit.com/r/technology/top/.rss?t=month"
     reddit_technology_items = []
     reddit_technology_last_updated = None
     reddit_technology_items, reddit_technology_last_updated = parse_rss_feed(reddit_technology_rss_url)
-    print(f"Fetched {len(reddit_technology_items)} items from Reddit Technology.")
+    print(f"Loaded {len(reddit_technology_items)} items from Reddit Technology.")
 
     technology_html = generate_html_base("Technology")
     technology_html += generate_top_nav_bar("technology.html")
