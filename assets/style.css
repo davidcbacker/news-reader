@@ -1,98 +1,96 @@
 body {
-  font-family: Arial, sans-serif;
+  align-items: center;
   background: #fff;
   color: #222;
-  margin: 0;
-  padding: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 h2 {
   font-size: 2.5em;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 h2 a {
-    color: #000000;
-    text-decoration: none;
-    overflow-wrap: break-word;
+  color: #000000;
+  overflow-wrap: break-word;
+  text-decoration: none;
 }
 
 h2 a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 p.last-updated {
-  font-style: italic;
   font-size: 0.9em;
+  font-style: italic;
 }
 
 ul.navbar {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  font-size: 1rem;
   color: #222;
   display: flex;
   flex-wrap: nowrap;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
   justify-content: center;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
   width: 800px;
 }
 
 ul.navbar li {
-  margin-bottom: 0.5em;
-  padding-left: 0.2em;
-  transition: background 0.2s;
-  flex: 1 1 1px;
-  box-sizing: border-box;
   background: #f8f8f8;
   border-radius: 10px;
-  padding: 0.8em;
+  box-sizing: border-box;
+  flex: 1 1 1px;
   margin: 0.5em;
+  padding: 0.8em;
+  padding-left: 0.2em;
+  transition: background 0.2s;
 }
 
 ul.navbar li a {
-    color: #000000;
-    text-decoration: none;
-    overflow-wrap: break-word;
+  color: #000000;
+  overflow-wrap: break-word;
+  text-decoration: none;
 }
 
 ul.navbar li a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 
 ul.news-list {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  font-size: 1rem;
   color: #222;
   display: flex;
   flex-wrap: wrap;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
   justify-content: center;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
 ul.news-list li {
-  margin-bottom: 0.5em;
-  padding-left: 0.2em;
-  transition: background 0.2s;
-  flex: 1 1 350px;
-  box-sizing: border-box;
   background: #f8f8f8;
   border-radius: 10px;
-  padding: 0.8em;
+  box-sizing: border-box;
+  flex: 1 1 350px;
   margin: 0.5em;
+  padding: 0.8em;
+  padding-left: 0.2em;
+  transition: background 0.2s;
 }
 
 ul.news-list li a {
-    color: #000000;
-    text-decoration: none;
-    overflow-wrap: break-word;
+  color: #000000;
+  overflow-wrap: break-word;
+  text-decoration: none;
 }
 
 ul.news-list li a:hover {
