@@ -24,7 +24,7 @@ h2 a:hover {
   text-decoration: underline;
 }
 
-p.last-updated {
+.last-updated {
   font-size: 0.9em;
   font-style: italic;
 }
