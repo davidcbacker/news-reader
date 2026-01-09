@@ -491,20 +491,30 @@ def generate_security_html(max_news_items):
     """
 
     talkback_news_rss_url = "https://talkback.sh/resources/feed/news/"
+    talkback_news_items = []
+    talkback_news_last_updated = None
     talkback_news_items, talkback_news_last_updated = parse_rss_feed(talkback_news_rss_url)
 
     talkback_technical_rss_url = "https://talkback.sh/resources/feed/tech/"
+    talkback_technical_items = []
+    talkback_technical_last_updated = None
     talkback_technical_items, talkback_technical_last_updated = parse_rss_feed(talkback_technical_rss_url)
 
     hacker_news_rss_url = "https://feeds.feedburner.com/TheHackersNews"
+    hacker_news_items = []
+    hacker_news_last_updated = None
     hacker_news_items, hacker_news_last_updated = parse_rss_feed(hacker_news_rss_url)
     print(f"Loaded {len(hacker_news_items)} items from Hacker News.")
 
     sans_internet_storm_center_rss_url = "https://isc.sans.edu/rssfeed.xml"
+    sans_isc_items = []
+    sans_isc_last_updated = None
     sans_isc_items, sans_isc_last_updated = parse_rss_feed(sans_internet_storm_center_rss_url)
     print(f"Loaded {len(sans_isc_items)} items from SANS Internet Storm Center.")
 
     krebs_on_security_rss_url = "https://krebsonsecurity.com/feed/"
+    krebs_items = []
+    krebs_last_updated = None
     krebs_items, krebs_last_updated = parse_rss_feed(krebs_on_security_rss_url)
     print(f"Loaded {len(krebs_items)} items from Krebs on Security.")
 
