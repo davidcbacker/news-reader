@@ -210,10 +210,11 @@ def generate_reuters_html_section(section_title, section_url, feed_url, max_news
         <p class="last-updated">{reuters_last_updated if reuters_last_updated else ''}</p>
         <ul class=\"news-list\">\n"""
     for item in reuters_items[:max_news_items]:
+        item_title = clean_up_html_string(item.get("title", ""))
         # remove ' - Reuters' from the title
-        if item['title'].endswith(" [Reuters]"):
-            item['title'] = item['title'][:-10]
-        reuters_html += f"            <li><a href=\"{item['link']}\" target=\"_blank\"><strong>{item['title']}</strong></a></li>\n"
+        if item_title.endswith(" [Reuters]"):
+            item_title = item_title[:-10]
+        reuters_html += f"            <li><a href=\"{item['link']}\" target=\"_blank\"><strong>{item_title}</strong></a></li>\n"
     reuters_html += "        </ul>\n"
     return reuters_html
 
