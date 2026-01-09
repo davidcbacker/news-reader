@@ -143,7 +143,7 @@ def generate_top_nav_bar(current_page: str):
     nav_bar = "        <ul class=\"navbar\">\n"
     for page_file, page_name in pages:
         if page_file == current_page:
-            nav_bar += f"            <li><a class=\"active-navbar\" href=\"{page_file}\">{page_name}</a></li>\n"
+            nav_bar += f"            <li class=\"active\"><a href=\"{page_file}\">{page_name}</a></li>\n"
             # nav_bar += f"            <li><a class=\"active\" href=\"{page_file}\"><{page_name}</a></li>\n"
         else:
             nav_bar += f"            <li><a href=\"{page_file}\">{page_name}</a></li>\n"
