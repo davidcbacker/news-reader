@@ -41,7 +41,6 @@ jobs:
             if [ "${file}" = "output/security.html" ]; then
               html-validate  \
                 --preset recommended \
-                # --rule no-raw-characters:warn \
                 --rule no-trailing-whitespace:warn \
                 output/security.html
             else
