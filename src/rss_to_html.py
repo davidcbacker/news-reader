@@ -490,6 +490,16 @@ def generate_security_html(max_news_items):
         str: The complete HTML for the Security News page.
     """
 
+    talkback_news_rss_url = "https://talkback.sh/resources/feed/news/"
+    talkback_news_items = []
+    talkback_news_last_updated = None
+    talkback_news_items, talkback_news_last_updated = parse_rss_feed(talkback_news_rss_url)
+
+    talkback_technical_rss_url = "https://talkback.sh/resources/feed/tech/"
+    talkback_technical_items = []
+    talkback_technical_last_updated = None
+    talkback_tecnhical_items, talkback_technical_last_updated = parse_rss_feed(talkback_technical_rss_url)
+
     hacker_news_rss_url = "https://feeds.feedburner.com/TheHackersNews"
     hacker_news_items = []
     hacker_news_last_updated = None
@@ -510,6 +520,22 @@ def generate_security_html(max_news_items):
 
     security_html = generate_html_base("Security")
     security_html += generate_top_nav_bar("security.html")
+
+    security_html += generate_html_section(
+        section_title="Talkback.sh News",
+        section_url="https://talkback.sh/",
+        news_items=talkback_news_items,
+        news_last_updated=talkback_news_last_updated,
+        max_news_items=max_news_items
+    )
+
+    security_html += generate_html_section(
+        section_title="Talkback.sh Technical",
+        section_url="https://talkback.sh/",
+        news_items=talkback_technical_items,
+        news_last_updated=talkback_technical_last_updated,
+        max_news_items=max_news_items
+    )
 
     security_html += generate_html_section(
         section_title="Hacker News",
