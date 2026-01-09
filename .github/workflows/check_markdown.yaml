@@ -46,5 +46,5 @@ jobs:
         run: |
           cspell "**/*.md" \
             --config config/cspell.json \
-            --ignore "node_modules/**/*" \
-            --ignore "myenv/**/*"
+            --exclude "node_modules/**/*" \
+            --exclude "myenv/**/*"
