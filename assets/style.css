@@ -55,27 +55,14 @@ ul.navbar li {
 }
 
 ul.navbar li a {
-  color: #ffffff;
-  background: #000000;
+  color: #000000;
   text-decoration: none;
   overflow-wrap: break-word;
-  padding: 0;
-  margin: 0;
-  height: 100%
-  width: 100%;
 }
 
 ul.navbar li a:hover {
     text-decoration: underline;
 }
-
-ul.navbar li a.active-navbar {
-  color: #000000;
-  background: #ffffff;
-  text-decoration: none;
-  overflow-wrap: break-word;
-}
-
 
 ul.news-list {
   list-style-type: none;
