@@ -22,7 +22,9 @@ jobs:
       - name: Install csslint
         run: |
           npm install -g csslint
-      - name: Run markdownlint
+      - name: List rules
         run: |
           csslint --list-rules
+      - name: Run csslint
+        run: |
           csslint assets/*.css
