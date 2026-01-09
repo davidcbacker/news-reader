@@ -32,7 +32,7 @@ def parse_rss_feed(url: str):
     feed_title = feed.feed.get('title', 'Unknown feed')
     if feed.bozo:
         print(f"Feed.bozo_exception: {feed.bozo_exception}  for URL: {url}")
-    print(f"Loading {len(feed.entries)} items from {feed_title}")
+    print(f"Fetched {len(feed.entries)} items from {feed_title}")
     items = []
     for entry in feed.entries:
         entry_title = entry.get("title", "No title")
