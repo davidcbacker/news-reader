@@ -53,16 +53,24 @@ ul.navbar li {
   transition: background 0.2s;
 }
 
+ul.navbar li.active {
+  background: #ffffff;
+}
+
 ul.navbar li a {
   color: #000000;
   overflow-wrap: break-word;
   text-decoration: none;
+
+}
+
+ul.navbar li.active a {
+  color: #ffffff;
 }
 
 ul.navbar li a:hover {
   text-decoration: underline;
 }
-
 
 ul.news-list {
   color: #222;
