@@ -19,8 +19,8 @@ def parse_rss_feed(url: str):
         tuple: (list of news items, last updated time)
     """
     context = ssl.create_default_context(cafile=certifi.where())
-    context.check_hostname = False
-    context.verify_mode = ssl.CERT_NONE
+    context.check_hostname = True
+    context.verify_mode = ssl.CERT_REQUIRED
     handlers = [urllib.request.HTTPSHandler(context=context)]
     try:
         print(f"Fetching items from {os.path.dirname(url)}")
