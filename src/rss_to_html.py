@@ -154,16 +154,18 @@ def generate_top_nav_bar(current_page: str):
     return nav_bar
 
 
-def generate_google_news_html_section(section_title, section_url, google_news_items, google_news_last_updated, max_news_items):
+def generate_google_news_html_section(section_title, section_url, feed_url, max_news_items):
     """
     Generate the HTML section for Google News items.
     Args:
-        google_news_items (list): List of Google News items.
-        google_news_last_updated (str): Last updated time for Google News.
+        section_title (str): The title of the Google News news section.
+        section_url (str): The URL of the Google News topic.
+        feed_url (str): The URL of the rss feed.
         max_news_items (int): Maximum number of news items to display.
     Returns:
         str: The HTML section for Google News.
     """
+    google_news_items, google_news_last_updated = parse_rss_feed(feed_url)
     google_news_html = f"""        <h2 id="{section_title.lower().replace(' ', '-').replace('.', '')}"><a href="{section_url}">{section_title}</a></h2>
         <p class="last-updated">{google_news_last_updated if google_news_last_updated else ''}</p>
         <ul class=\"news-list\">\n"""
@@ -178,18 +180,18 @@ def generate_google_news_html_section(section_title, section_url, google_news_it
     return google_news_html
 
 
-def generate_reuters_html_section(section_title, section_url, reuters_items, reuters_last_updated, max_news_items):
+def generate_reuters_html_section(section_title, section_url, feed_url, max_news_items):
     """
     Generate the HTML section for Reuters news items.
     Args:
         section_title (str): The title of the Reuters news section.
         section_url (str): The URL of the Reuters news source.
-        reuters_items (list): List of Reuters news items.
-        reuters_last_updated (str): Last updated time for Reuters news.
+        feed_url (str): The URL of the rss feed.
         max_news_items (int): Maximum number of news items to display.
     Returns:
         str: The HTML section for Reuters news.
     """
+    reuters_items, reuters_last_updated = parse_rss_feed(feed_url)
     reuters_html = f"""        <h2 id="reuters"><a href="{section_url}">{section_title}</a></h2>
         <p class="last-updated">{reuters_last_updated if reuters_last_updated else ''}</p>
         <ul class=\"news-list\">\n"""
@@ -202,22 +204,16 @@ def generate_reuters_html_section(section_title, section_url, reuters_items, reu
     return reuters_html
 
 
-def generate_reddit_technology_html_section(
-    section_title,
-    section_url,
-    reddit_technology_items,
-    reddit_technology_last_updated,
-    max_news_items
-):
+def generate_reddit_technology_html_section(section_title, section_url, feed_url, max_news_items):
     """
     Generate the HTML section for Reddit Technology news items.
     Args:
         section_title (str): The title of the Reddit Technology news section.
         section_url (str): The URL of the Reddit Technology news source.
-        reddit_technology_items (list): List of Reddit Technology news items.
-        reddit_technology_last_updated (str): Last updated time for Reddit Technology news.
+        feed_url (str): The URL of the rss feed.
         max_news_items (int): Maximum number of news items to display.
     """
+    reddit_technology_items, reddit_technology_last_updated = parse_rss_feed(feed_url)
     reddit_technology_html = f"""        <h2 id="{section_title.lower().replace(' ', '-').replace('.', '')}"><a href="{section_url}">{section_title}</a></h2>
         <p class="last-updated">{reddit_technology_last_updated if reddit_technology_last_updated else ''}</p>
         <ul class=\"news-list\">\n"""
@@ -227,18 +223,18 @@ def generate_reddit_technology_html_section(
     return reddit_technology_html
 
 
-def generate_html_section(section_title, section_url, news_items, news_last_updated, max_news_items):
+def generate_html_section(section_title, section_url, feed_url, max_news_items):
     """
     Generate the HTML section for a generic news source.
     Args:
         section_title (str): The title of the news section.
         section_url (str): The URL of the news source.
-        news_items (list): List of news items.
-        news_last_updated (str): Last updated time for the news source.
+        feed_url (str): The URL of the rss feed.
         max_news_items (int): Maximum number of news items to display.
     Returns:
         str: The HTML section for the news source.
     """
+    news_items, news_last_updated = parse_rss_feed(feed_url)
     html = f"""        <h2 id="{section_title.lower().replace(' ', '-').replace('.', '')}"><a href="{section_url}">{section_title}</a></h2>
         <p class="last-updated">{news_last_updated if news_last_updated else ''}</p>
         <ul class=\"news-list\">\n"""
@@ -257,29 +253,19 @@ def generate_index_html(max_news_items):
         str: The complete HTML for the index page.
     """
     google_news_rss_url = "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en"
-    google_news_items = []
-    google_news_last_updated = None
-    google_news_items, google_news_last_updated = parse_rss_feed(google_news_rss_url)
-    print(f"Loaded {len(google_news_items)} items from Google News.")
     reuters_rss_url = "https://news.google.com/rss/search?q=site%3Areuters.com&hl=en-US&gl=US&ceid=US%3Aen"
-    reuters_items = []
-    reuters_last_updated = None
-    reuters_items, reuters_last_updated = parse_rss_feed(reuters_rss_url)
-    print(f"Loaded {len(reuters_items)} items from Reuters.")
     index_html = generate_html_base("Top News")
     index_html += generate_top_nav_bar("index.html")
     index_html += generate_google_news_html_section(
         section_title="Google News",
         section_url="https://news.google.com/home?hl=en-US&gl=US&ceid=US:en",
-        google_news_items=google_news_items,
-        google_news_last_updated=google_news_last_updated,
+        feed_url=google_news_rss_url,
         max_news_items=max_news_items
     )
     index_html += generate_reuters_html_section(
         section_title="Reuters",
         section_url="https://www.reuters.com",
-        reuters_items=reuters_items,
-        reuters_last_updated=reuters_last_updated,
+        feed_url=reuters_rss_url,
         max_news_items=max_news_items
     )
     index_html += generate_html_closing()
@@ -295,53 +281,33 @@ def generate_us_news_html(max_news_items):
         str: The complete HTML for the U.S. News page.
     """
     google_news_us_rss_url = "https://news.google.com/rss/topics/CAAqIggKIhxDQkFTRHdvSkwyMHZNRGxqTjNjd0VnSmxiaWdBUAE"
-    google_news_us_items = []
-    google_news_us_last_updated = None
-    google_news_us_items, google_news_us_last_updated = parse_rss_feed(google_news_us_rss_url)
-    print(f"Loaded {len(google_news_us_items)} items from Google News US.")
     fox_weather_rss_url = "https://moxie.foxweather.com/google-publisher/latest.xml"
-    fox_weather_items = []
-    fox_weather_last_updated = None
-    fox_weather_items, fox_weather_last_updated = parse_rss_feed(fox_weather_rss_url)
-    print(f"Loaded {len(fox_weather_items)} items from Fox Weather.")
     cnbc_us_rss_url = "https://www.cnbc.com/id/15837362/device/rss/rss.html"
-    cnbc_us_items = []
-    cnbc_us_last_updated = None
-    cnbc_us_items, cnbc_us_last_updated = parse_rss_feed(cnbc_us_rss_url)
-    print(f"Loaded {len(cnbc_us_items)} items from CNBC U.S.")
     cnn_us_rss_url = "http://rss.cnn.com/rss/cnn_us.rss"
-    cnn_us_items = []
-    cnn_us_last_updated = None
-    cnn_us_items, cnn_us_last_updated = parse_rss_feed(cnn_us_rss_url)
-    print(f"Loaded {len(cnn_us_items)} items from CNN U.S.")
     us_news_html = generate_html_base("U.S. News")
     us_news_html += generate_top_nav_bar("us.html")
     us_news_html += generate_google_news_html_section(
         section_title="Google News - U.S.",
         section_url="https://news.google.com/topics/CAAqIggKIhxDQkFTRHdvSkwyMHZNRGxqTjNjd0VnSmxiaWdBUAE",
-        google_news_items=google_news_us_items,
-        google_news_last_updated=google_news_us_last_updated,
+        feed_url=google_news_us_rss_url,
         max_news_items=max_news_items
     )
     us_news_html += generate_html_section(
         section_title="Fox Weather",
         section_url="https://www.foxweather.com/",
-        news_items=fox_weather_items,
-        news_last_updated=fox_weather_last_updated,
+        feed_url=fox_weather_rss_url,
         max_news_items=max_news_items
     )
     us_news_html += generate_html_section(
         section_title="CNBC U.S.",
         section_url="https://www.cnbc.com/us-news/",
-        news_items=cnbc_us_items,
-        news_last_updated=cnbc_us_last_updated,
+        feed_url=cnbc_us_rss_url,
         max_news_items=max_news_items
     )
     us_news_html += generate_html_section(
         section_title="CNN U.S.",
         section_url="https://www.cnn.com/us",
-        news_items=cnn_us_items,
-        news_last_updated=cnn_us_last_updated,
+        feed_url=cnn_us_rss_url,
         max_news_items=max_news_items
     )
     us_news_html += generate_html_closing()
@@ -357,29 +323,19 @@ def generate_world_news_html(max_news_items):
         str: The complete HTML for the World News page.
     """
     google_news_world_rss_url = "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtVnVHZ0pWVXlnQVAB"
-    google_news_world_items = []
-    google_news_world_last_updated = None
-    google_news_world_items, google_news_world_last_updated = parse_rss_feed(google_news_world_rss_url)
-    print(f"Loaded {len(google_news_world_items)} items from Google News World.")
     world_news_html = generate_html_base("World News")
     world_news_html += generate_top_nav_bar("world.html")
     bbc_world_rss_url = "https://feeds.bbci.co.uk/news/world/rss.xml"
-    bbc_world_items = []
-    bbc_world_last_updated = None
-    bbc_world_items, bbc_world_last_updated = parse_rss_feed(bbc_world_rss_url)
-    print(f"Loaded {len(bbc_world_items)} items from BBC World.")
     world_news_html += generate_google_news_html_section(
         section_title="Google News - World",
         section_url="https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtVnVHZ0pWVXlnQVAB",
-        google_news_items=google_news_world_items,
-        google_news_last_updated=google_news_world_last_updated,
+        feed_url=google_news_world_rss_url,
         max_news_items=max_news_items
     )
     world_news_html += generate_html_section(
         section_title="BBC News - World",
         section_url="https://www.bbc.com/news/world",
-        news_items=bbc_world_items,
-        news_last_updated=bbc_world_last_updated,
+        feed_url=bbc_world_rss_url,
         max_news_items=max_news_items
     )
     world_news_html += generate_html_closing()
@@ -395,53 +351,33 @@ def generate_business_html(max_news_items):
         str: The complete HTML for the Business News page.
     """
     google_news_business_rss_url = "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB"
-    google_news_business_items = []
-    google_news_business_last_updated = None
-    google_news_business_items, google_news_business_last_updated = parse_rss_feed(google_news_business_rss_url)
-    print(f"Loaded {len(google_news_business_items)} items from Google News Business.")
     bloomberg_rss_url = "https://feeds.bloomberg.com/news.rss"
-    bloomberg_items = []
-    bloomberg_last_updated = None
-    bloomberg_items, bloomberg_last_updated = parse_rss_feed(bloomberg_rss_url)
-    print(f"Loaded {len(bloomberg_items)} items from Bloomberg.")
     cnbc_rss_url = "https://www.cnbc.com/id/100003114/device/rss/rss.html"
-    cnbc_items = []
-    cnbc_last_updated = None
-    cnbc_items, cnbc_last_updated = parse_rss_feed(cnbc_rss_url)
-    print(f"Loaded {len(cnbc_items)} items from CNBC.")
     fox_business_rss_url = "https://moxie.foxbusiness.com/google-publisher/latest.xml"
-    fox_business_items = []
-    fox_business_last_updated = None
-    fox_business_items, fox_business_last_updated = parse_rss_feed(fox_business_rss_url)
-    print(f"Loaded {len(fox_business_items)} items from Fox Business.")
     business_html = generate_html_base("Business")
     business_html += generate_top_nav_bar("business.html")
     business_html += generate_google_news_html_section(
         section_title="Google News - Business",
         section_url="https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB",
-        google_news_items=google_news_business_items,
-        google_news_last_updated=google_news_business_last_updated,
+        feed_url=google_news_business_rss_url,
         max_news_items=max_news_items
     )
     business_html += generate_html_section(
         section_title="Bloomberg",
         section_url="https://www.bloomberg.com/",
-        news_items=bloomberg_items,
-        news_last_updated=bloomberg_last_updated,
+        feed_url=bloomberg_rss_url,
         max_news_items=max_news_items
     )
     business_html += generate_html_section(
         section_title="CNBC",
         section_url="https://www.cnbc.com/",
-        news_items=cnbc_items,
-        news_last_updated=cnbc_last_updated,
+        feed_url=cnbc_rss_url,
         max_news_items=max_news_items
     )
     business_html += generate_html_section(
         section_title="Fox Business",
         section_url="https://www.foxbusiness.com/",
-        news_items=fox_business_items,
-        news_last_updated=fox_business_last_updated,
+        feed_url=fox_business_rss_url,
         max_news_items=max_news_items
     )
     business_html += generate_html_closing()
@@ -457,81 +393,40 @@ def generate_security_html(max_news_items):
         str: The complete HTML for the Security News page.
     """
     talkback_news_rss_url = "https://talkback.sh/resources/feed/news/"
-    talkback_news_items = []
-    talkback_news_last_updated = None
-    talkback_news_items, talkback_news_last_updated = parse_rss_feed(talkback_news_rss_url)
-    print(f"Loaded {len(talkback_news_items)} items from Talkback.sh News.")
     talkback_technical_rss_url = "https://talkback.sh/resources/feed/tech/"
-    talkback_technical_items = []
-    talkback_technical_last_updated = None
-    talkback_technical_items, talkback_technical_last_updated = parse_rss_feed(talkback_technical_rss_url)
-    print(f"Loaded {len(talkback_technical_items)} items from Talkback.sh Technical.")
     hacker_news_rss_url = "https://feeds.feedburner.com/TheHackersNews"
-    hacker_news_items = []
-    hacker_news_last_updated = None
-    hacker_news_items, hacker_news_last_updated = parse_rss_feed(hacker_news_rss_url)
-    print(f"Loaded {len(hacker_news_items)} items from Hacker News.")
     sans_internet_storm_center_rss_url = "https://isc.sans.edu/rssfeed.xml"
-    sans_isc_items = []
-    sans_isc_last_updated = None
-    sans_isc_items, sans_isc_last_updated = parse_rss_feed(sans_internet_storm_center_rss_url)
-    print(f"Loaded {len(sans_isc_items)} items from SANS Internet Storm Center.")
     krebs_on_security_rss_url = "https://krebsonsecurity.com/feed/"
-    krebs_items = []
-    krebs_last_updated = None
-    krebs_items, krebs_last_updated = parse_rss_feed(krebs_on_security_rss_url)
-    print(f"Loaded {len(krebs_items)} items from Krebs on Security.")
     security_html = generate_html_base("Security")
     security_html += generate_top_nav_bar("security.html")
     security_html += generate_html_section(
         section_title="Talkback.sh News",
         section_url="https://talkback.sh/",
-        news_items=talkback_news_items,
-        news_last_updated=talkback_news_last_updated,
+        feed_url=,
         max_news_items=max_news_items
     )
     security_html += generate_html_section(
         section_title="Talkback.sh Technical",
         section_url="https://talkback.sh/",
-        news_items=talkback_technical_items,
-        news_last_updated=talkback_technical_last_updated,
+        feed_url=hacker_news_rss_url,
         max_news_items=max_news_items
     )
-    security_html += generate_html_section(
-        section_title="Talkback.sh News",
-        section_url="https://talkback.sh/",
-        news_items=talkback_news_items,
-        news_last_updated=talkback_news_last_updated,
-        max_news_items=max_news_items
-    )
-
-    security_html += generate_html_section(
-        section_title="Talkback.sh Technical",
-        section_url="https://talkback.sh/",
-        news_items=talkback_technical_items,
-        news_last_updated=talkback_technical_last_updated,
-        max_news_items=max_news_items
-    )
-
     security_html += generate_html_section(
         section_title="Hacker News",
         section_url="https://thehackernews.com/",
-        news_items=hacker_news_items,
-        news_last_updated=hacker_news_last_updated,
+        feed_url=hacker_news_rss_url,
         max_news_items=max_news_items
     )
     security_html += generate_html_section(
         section_title="SANS Internet Storm Center",
         section_url="https://isc.sans.edu/",
-        news_items=sans_isc_items,
-        news_last_updated=sans_isc_last_updated,
+        feed_url=sans_internet_storm_center_rss_url,
         max_news_items=max_news_items
     )
     security_html += generate_html_section(
         section_title="Krebs on Security",
         section_url="https://krebsonsecurity.com/",
-        news_items=krebs_items,
-        news_last_updated=krebs_last_updated,
+        feed_url=krebs_on_security_rss_url,
         max_news_items=max_news_items
     )
     security_html += generate_html_closing()
@@ -547,41 +442,26 @@ def generate_technology_html(max_news_items):
         str: The complete HTML for the Technology News page.
     """
     google_news_technology_rss_url = "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB"
-    google_news_technology_items = []
-    google_news_technology_last_updated = None
-    google_news_technology_items, google_news_technology_last_updated = parse_rss_feed(google_news_technology_rss_url)
-    print(f"Loaded {len(google_news_technology_items)} items from Google News Technology.")
     mit_tech_review_rss_url = "https://www.technologyreview.com/feed"
-    mit_tech_review_items = []
-    mit_tech_review_last_updated = None
-    mit_tech_review_items, mit_tech_review_last_updated = parse_rss_feed(mit_tech_review_rss_url)
-    print(f"Loaded {len(mit_tech_review_items)} items from MIT Technology Review.")
     reddit_technology_rss_url = "https://www.reddit.com/r/technology/top/.rss?t=month"
-    reddit_technology_items = []
-    reddit_technology_last_updated = None
-    reddit_technology_items, reddit_technology_last_updated = parse_rss_feed(reddit_technology_rss_url)
-    print(f"Loaded {len(reddit_technology_items)} items from Reddit Technology.")
     technology_html = generate_html_base("Technology")
     technology_html += generate_top_nav_bar("technology.html")
     technology_html += generate_google_news_html_section(
         section_title="Google News - Technology",
         section_url="https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB",
-        google_news_items=google_news_technology_items,
-        google_news_last_updated=google_news_technology_last_updated,
+        feed_url=google_news_technology_rss_url,
         max_news_items=max_news_items
     )
     technology_html += generate_html_section(
         section_title="MIT Technology Review",
         section_url="https://www.technologyreview.com/",
-        news_items=mit_tech_review_items,
-        news_last_updated=mit_tech_review_last_updated,
+        feedurl=mit_tech_review_rss_url,
         max_news_items=max_news_items
     )
     technology_html += generate_reddit_technology_html_section(
         section_title="Reddit Technology",
         section_url="https://www.reddit.com/r/technology/",
-        reddit_technology_items=reddit_technology_items,
-        reddit_technology_last_updated=reddit_technology_last_updated,
+        feed_url=reddit_technology_rss_url,
         max_news_items=max_news_items
     )
     technology_html += generate_html_closing()
