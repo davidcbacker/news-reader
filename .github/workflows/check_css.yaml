@@ -27,6 +27,4 @@ jobs:
           csslint --list-rules
       - name: Run csslint
         run: |
-          csslint \
-            --ignore import-ie-limit,order-alphabetical \
-            assets/*.css
+          csslint assets/*.css
