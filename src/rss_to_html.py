@@ -85,8 +85,8 @@ def extract_secondary_sources_from_description(description: str):
         if len(title_publisher_split) != 2:
             print(f"Unexpected source format during title-publisher split: {source}")
             continue
-        title = title_publisher_split[0]
-        publisher = title_publisher_split[1]
+        title = clean_up_html_string(title_publisher_split[0])
+        publisher = clean_up_html_string(title_publisher_split[1])
         item_secondary_sources_anchors.append(
             f'<a href="{url}" title="{title}" target="_blank">[{publisher}]</a>'
         )
@@ -154,6 +154,19 @@ def generate_top_nav_bar(current_page: str):
     return nav_bar
 
 
+def clean_up_html_string(html_string: str) -> str:
+    """
+    Clean up an HTML string by removing unwanted substrings.
+    Args:
+        html_string (str): The HTML string to clean up.
+    Returns:
+        str: The cleaned-up HTML string.
+    """
+    html_string = html_string.replace('"', "'")
+    html_string = html_string.replace("&", "&amp;")
+    return html_string
+
+
 def generate_google_news_html_section(section_title, section_url, feed_url, max_news_items):
     """
     Generate the HTML section for Google News items.
@@ -170,6 +183,7 @@ def generate_google_news_html_section(section_title, section_url, feed_url, max_
         <p class="last-updated">{google_news_last_updated if google_news_last_updated else ''}</p>
         <ul class=\"news-list\">\n"""
     for item in google_news_items[:max_news_items]:
+        item_title = clean_up_html_string(item.get("title", ""))
         item_description = item.get("description", "")
         item_secondary_sources_anchors = extract_secondary_sources_from_description(item_description)
         if item_secondary_sources_anchors:
