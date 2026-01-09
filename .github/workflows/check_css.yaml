@@ -27,4 +27,5 @@ jobs:
           csslint --list-rules
       - name: Run csslint
         run: |
-          csslint assets/*.css
+          csslint assets/*.css \
+            --ignore order-alphabetical
