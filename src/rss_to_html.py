@@ -498,6 +498,22 @@ def generate_security_html(max_news_items):
         max_news_items=max_news_items
     )
     security_html += generate_html_section(
+        section_title="Talkback.sh News",
+        section_url="https://talkback.sh/",
+        news_items=talkback_news_items,
+        news_last_updated=talkback_news_last_updated,
+        max_news_items=max_news_items
+    )
+
+    security_html += generate_html_section(
+        section_title="Talkback.sh Technical",
+        section_url="https://talkback.sh/",
+        news_items=talkback_technical_items,
+        news_last_updated=talkback_technical_last_updated,
+        max_news_items=max_news_items
+    )
+
+    security_html += generate_html_section(
         section_title="Hacker News",
         section_url="https://thehackernews.com/",
         news_items=hacker_news_items,
