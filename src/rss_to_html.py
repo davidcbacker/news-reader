@@ -498,7 +498,7 @@ def generate_security_html(max_news_items):
     talkback_technical_rss_url = "https://talkback.sh/resources/feed/tech/"
     talkback_technical_items = []
     talkback_technical_last_updated = None
-    talkback_tecnhical_items, talkback_technical_last_updated = parse_rss_feed(talkback_technical_rss_url)
+    talkback_technical_items, talkback_technical_last_updated = parse_rss_feed(talkback_technical_rss_url)
 
     hacker_news_rss_url = "https://feeds.feedburner.com/TheHackersNews"
     hacker_news_items = []
