@@ -19,7 +19,7 @@ jobs:
       - name: Filter changed file types
         id: filter
         run: |
-          files=$(git diff --name-only origin/${{ github.base_ref }} ${{ github.sha }})
+          files=$(git diff --name-only origin/master)
           css='false'
           python='false'
           markdown='false'
