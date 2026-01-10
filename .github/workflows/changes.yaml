@@ -57,6 +57,7 @@ jobs:
   build_website:
     name: Build Website
     needs:
+      - composer
       - check_css
       - check_markdown
       - check_python
