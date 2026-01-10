@@ -21,9 +21,6 @@ jobs:
         with:
           name: website_build_output
           path: output
-      - name: If artifact download fails, checkout code
-        if: steps.download_artifact.outcome == 'failure'
-        uses: actions/checkout@v6
       - name: If artifact download fails, build output
         if: steps.download_artifact.outcome == 'failure'
         uses: ./.github/workflows/website_build.yaml
