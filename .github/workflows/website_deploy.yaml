@@ -1,22 +1,14 @@
 name: Build and Deploy Website
 
 on:
-  push:
-    branches: master
-  pull_request:
-    branches: master
   schedule:
     - cron: "*/15 * * * *"
+  workflow_call:
   workflow_dispatch:
 
 jobs:
-  build_website:
-    name: Build deployment artifact
-    uses: ./.github/workflows/build_website.yaml
-
   deploy_website:
     name: Deploy from artifact
-    needs: build_website
     if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     permissions:
