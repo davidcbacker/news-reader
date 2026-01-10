@@ -23,7 +23,7 @@ def parse_rss_feed(url: str):
     context.verify_mode = ssl.CERT_REQUIRED
     handlers = [urllib.request.HTTPSHandler(context=context)]
     try:
-        print(f"Fetching items from {os.path.dirname(url)}")
+        print(f"Fetching items from {os.path.dirname(url.replace("https://", ""))}")
         feed = feedparser.parse(url, handlers=handlers)
     except http.client.RemoteDisconnected as e:
         print(f"Error: RemoteDisconnected with {url}")
