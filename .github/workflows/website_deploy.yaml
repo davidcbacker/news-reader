@@ -1,15 +1,12 @@
 name: Build and Deploy Website
 
 on:
-  schedule:
-    - cron: "*/15 * * * *"
   workflow_call:
   workflow_dispatch:
 
 jobs:
   deploy_website:
     name: Deploy from artifact
-    if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
