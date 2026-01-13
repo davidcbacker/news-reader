@@ -32,6 +32,7 @@ jobs:
               html-validate  \
                 --preset recommended \
                 --rule no-trailing-whitespace:warn \
+                --rule wcag/h30:warn \
                 output/security.html
             else
               html-validate  "${file}"
