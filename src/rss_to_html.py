@@ -148,7 +148,7 @@ def generate_top_nav_bar(current_page: str):
     ]
     nav_bar = """        <div class=\"navbar\">
         <a class=\"icon\" href=\"javascript:void(0);\" onclick=\"myFunction()\">
-          <i class=\"fa fa-bars\"></i>
+          <i class=\"fa fa-bars\" alt=\"Open links menu\"></i>
         </a>
         <ul id=\"navbar-links\">\n"""
     for page_file, page_name in pages:
