@@ -31,13 +31,11 @@ jobs:
             if [ "${file}" = "output/security.html" ]; then
               html-validate  \
                 --preset recommended \
-                --rule element-permitted-content:warn \
                 --rule no-trailing-whitespace:warn \
                 --rule wcag/h30:off \
                 output/security.html
             else
               html-validate  \
-                --rule element-permitted-content:warn \
                 --rule wcag/h30:off \
                 "${file}"
             fi
