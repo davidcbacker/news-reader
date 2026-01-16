@@ -40,7 +40,7 @@ def parse_rss_feed(url: str):
         # Google News formats titles like "Headline - Source"
         entry_title_rsplit = entry_title.rsplit(" - ", 1)
         if len(entry_title_rsplit) == 2:
-            entry_title_cleaned = f"{entry_title_rsplit[0]} [{entry_title_rsplit[1]}]"
+            entry_title_cleaned = f"{entry_title_rsplit[0]} [{clean_up_html_string(entry_title_rsplit[1])}]"
         else:
             entry_title_cleaned = entry_title
         items.append({
@@ -170,6 +170,7 @@ def clean_up_html_string(html_string: str) -> str:
     """
     html_string = html_string.replace('"', "'")
     html_string = html_string.replace("&", "&amp;")
+    html_string = html_string.rsplit(" (.gov)", 1)[0]
     return html_string
 
 
