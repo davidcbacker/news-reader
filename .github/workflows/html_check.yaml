@@ -26,17 +26,7 @@ jobs:
           npm install -g html-validate
       - name: Run html-validate
         run: |
-          set -e
-          for file in output/*.html; do
-            if [ "${file}" = "output/security.html" ]; then
-              html-validate  \
-                --preset recommended \
-                --rule no-trailing-whitespace:warn \
-                --rule wcag/h30:off \
-                output/security.html
-            else
-              html-validate  \
-                --rule wcag/h30:off \
-                "${file}"
-            fi
-          done
+          html-validate  \
+              --preset recommended \
+              --rule wcag/h30:off \
+              output/*.html
