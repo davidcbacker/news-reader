@@ -29,7 +29,7 @@ h2 a:hover {
   font-style: italic;
 }
 
-ul.navbar {
+div.navbar {
   background-color: black;
   display: flex;
   flex-wrap: nowrap;
@@ -43,7 +43,7 @@ ul.navbar {
   width: 781px;
 }
 
-ul.navbar a.icon {
+div.navbar a.icon {
   background: black;
   position: absolute;
   left: 0;
@@ -55,7 +55,7 @@ ul.navbar a.icon {
   top: 0;
 }
 
-ul.navbar li.navbar-link {
+div.navbar div.navbar-link {
   background-color: black;
   border-radius: 10px;
   box-sizing: border-box;
@@ -68,7 +68,7 @@ ul.navbar li.navbar-link {
   height: 3em;
 }
 
-ul.navbar li.navbar-link a {
+div.navbar div.navbar-link a {
   color: white;
   display: block;
   font-weight: bold;
@@ -81,11 +81,11 @@ ul.navbar li.navbar-link a {
   height: 100%;
 }
 
-ul.navbar li#active-navbar-link {
+div.navbar div#active-navbar-link {
   background-color: white;
 }
 
-ul.navbar li#active-navbar-link a {
+div.navbar div#active-navbar-link a {
   color: #222;
 }
 
@@ -122,21 +122,21 @@ ul.news-list li a:hover {
 }
 
 @media screen and (max-width: 800px) {
-  ul.navbar, ul.news-list {
+  div.navbar, ul.news-list {
     display: block;
     width: 100%;
   }
 
-  ul.navbar {
+  div.navbar {
     align-items: center;
     padding: 0;
   }
 
-  ul.navbar a.icon {
+  div.navbar a.icon {
     display: block;
   }
 
-  ul.navbar li.navbar-link {
+  div.navbar div.navbar-link {
     align-items: center;
     border-radius: 0;
     display: none;
@@ -153,7 +153,7 @@ ul.news-list li a:hover {
 }
 
 @media screen and (min-width: 801px) {
-  ul.navbar li.navbar-link {
+  div.navbar div.navbar-link {
     display: block;
   }
 }
