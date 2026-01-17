@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint_markdown:
+  lint_css:
     name: Lint CSS code
     runs-on: ubuntu-latest
     steps:
