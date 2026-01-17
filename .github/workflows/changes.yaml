@@ -10,20 +10,57 @@ on :
   workflow_dispatch:
 
 jobs:
+  composer:
+    runs-on: ubuntu-latest
+    outputs:
+      css: ${{ steps.filter.outputs.css }}
+      python: ${{ steps.filter.outputs.python }}
+      markdown: ${{ steps.filter.outputs.markdown }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Filter changed file types
+        id: filter
+        run: |
+          files=$(git diff --name-only origin/master)
+          css='false'
+          python='false'
+          markdown='false'
+          for file in "${files}"; do
+            case "${file}" in
+              *.css) css='true' ;;
+              *.py) python='true' ;;
+              *.md) markdown='true' ;;
+            esac
+          done
+          echo "css=${css}" >> "${GITHUB_OUTPUT}"
+          echo "python=${python}" >> "${GITHUB_OUTPUT}"
+          echo "markdown=${markdown}" >> "${GITHUB_OUTPUT}"
+
   check_css:
     name: Check CSS code
+    needs: composer
+    if: needs.composer.outputs.css == 'true'
     uses: ./.github/workflows/css_check.yaml
 
   check_markdown:
     name: Check Markdown code
+    needs: composer
+    if: needs.composer.outputs.markdown == 'true'
     uses: ./.github/workflows/markdown_check.yaml
 
   check_python:
     name: Check Python code
+    needs: composer
+    if: needs.composer.outputs.python == 'true'
     uses: ./.github/workflows/python_check.yaml
+
   build_website:
     name: Build Website
     needs:
+      - composer
       - check_css
       - check_markdown
       - check_python
