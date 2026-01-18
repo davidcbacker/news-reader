@@ -2,6 +2,7 @@
 This module fetches news from various RSS feeds and generates HTML pages for different news categories.
 It includes functions for parsing RSS feeds, extracting secondary sources, and building HTML content for news pages.
 """
+import html
 import http
 import os
 import shutil
@@ -167,6 +168,7 @@ def clean_up_html_string(html_string: str) -> str:
     Returns:
         str: The cleaned-up HTML string.
     """
+    html_string = html.unescape(html_string)
     html_string = html_string.replace('"', "'")
     html_string = html_string.replace("&", "&amp;")
     html_string = html_string.rsplit(" (.gov)", 1)[0]
@@ -258,15 +260,15 @@ def generate_html_section(section_title, section_url, feed_url, max_news_items):
         str: The HTML section for the news source.
     """
     news_items, news_last_updated = parse_rss_feed(feed_url)
-    html = f"""        <h2 id="{section_title.lower().replace(' ', '-').replace('.', '')}"><a href="{section_url}">{section_title}</a></h2>
+    generated_html = f"""        <h2 id="{section_title.lower().replace(' ', '-').replace('.', '')}"><a href="{section_url}">{section_title}</a></h2>
         <p class="last-updated">{news_last_updated if news_last_updated else ''}</p>
         <ul class=\"news-list\">\n"""
     for item in news_items[:max_news_items]:
         item_title = clean_up_html_string(item.get("title", ""))
         item_description = clean_up_html_string(item.get("description", ""))
-        html += f"            <li><a href=\"{item['link']}\" title=\"{item_description}\" target=\"_blank\"><strong>{item_title}</strong><br>{item_description}</a></li>\n"
-    html += "        </ul>\n"
-    return html
+        generated_html += f"            <li><a href=\"{item['link']}\" title=\"{item_description}\" target=\"_blank\"><strong>{item_title}</strong><br>{item_description}</a></li>\n"
+    generated_html += "        </ul>\n"
+    return generated_html
 
 
 def generate_index_html(max_news_items):
